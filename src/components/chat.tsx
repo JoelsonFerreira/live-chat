@@ -20,13 +20,13 @@ export function Chat({ authorId, showBackButton, className }: { authorId: string
       </header>
 
       <ul className="grow p-4">
-        {userMessages?.messages.map(message => (
+        {userMessages?.messages.map((message, idx) => (
           message.sended ?
-            <li className="flex items-center gap-2 justify-end">
+            <li key={idx} className="flex items-center gap-2 justify-end">
               <span className="block bg-white py-2 px-4 rounded-2xl rounded-tr-none">{message.text}</span>
               <strong className="block">{user}</strong>
             </li> :
-            <li className="flex items-center gap-2">
+            <li key={idx} className="flex items-center gap-2">
               <strong className="block">{authorId}</strong>
               <span className="block bg-white py-2 px-4 rounded-2xl rounded-tl-none">{message.text}</span>
             </li>
