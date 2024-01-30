@@ -17,7 +17,7 @@ export function ServerProvider({ children }: { children?: ReactNode }) {
   const [user, setUser] = useState<string>()
   const [onlineUsers, setOnlineUsers] = useState<string[]>([])
 
-  const ws = new WebSocket('ws://localhost:8080');
+  const ws = new WebSocket(`${process.env.NEXT_PUBLIC_SERVER_URL}`);
 
   ws.onopen = () => console.log('[server] connected');
   ws.onclose = () => console.log('[server] disconnected');
