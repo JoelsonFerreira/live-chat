@@ -6,6 +6,8 @@ import { BackButton } from "@/components/back-button";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useChat } from "@/contexts/server-context";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "./ui/card";
+import { Avatar, AvatarFallback } from "./ui/avatar";
 
 export function Chat({ authorId, showBackButton, className }: { authorId: string, showBackButton: boolean, className?: string }) {
   const { sendMessage, messages, user } = useChat()
@@ -13,43 +15,55 @@ export function Chat({ authorId, showBackButton, className }: { authorId: string
   const userMessages = messages.find(message => message.user === authorId)
 
   return (
-    <main className={"w-full h-full flex flex-col gap-4 bg-slate-50 " + className}>
-      <header className="flex items-center gap-2 p-4 bg-slate-600">
+    <Card className={className}>
+      <CardHeader className="flex flex-row gap-2 items-center justify-start space-y-0">
         {showBackButton && <BackButton />}
-        <strong className="text-white">{authorId}</strong>
-      </header>
+        <CardTitle>{authorId}</CardTitle>
+      </CardHeader>
 
-      <ul className="grow p-4">
+      <CardContent className="grow overflow-y-auto grid gap-2 content-start">
         {userMessages?.messages.map((message, idx) => (
           message.sended ?
-            <li key={idx} className="flex items-center gap-2 justify-end">
-              <span className="block bg-white py-2 px-4 rounded-2xl rounded-tr-none">{message.text}</span>
-              <strong className="block">{user}</strong>
+            <li key={idx} className="list-none flex items-start gap-2 justify-end">
+              <div className="flex flex-col items-end">
+                <span className="block bg-gray-200 py-2 px-4 rounded-2xl rounded-tr-none">{message.text}</span>
+                <span className={`text-gray-500`}>{message?.time.getHours()}:{message?.time.getMinutes()}</span>
+              </div>
+              <Avatar>
+                <AvatarFallback className="bg-gray-800 text-gray-200">{user?.slice(0, 2).toUpperCase()}</AvatarFallback>
+              </Avatar>
             </li> :
-            <li key={idx} className="flex items-center gap-2">
-              <strong className="block">{authorId}</strong>
-              <span className="block bg-white py-2 px-4 rounded-2xl rounded-tl-none">{message.text}</span>
+            <li key={idx} className="list-none flex items-start gap-2">
+              <Avatar>
+                <AvatarFallback className="bg-gray-800 text-gray-200">{authorId.slice(0, 2).toUpperCase()}</AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col items-start">
+                <span className="block bg-gray-200 py-2 px-4 rounded-2xl rounded-tl-none">{message.text}</span>
+                <span className={`text-gray-500`}>{message?.time.getHours()}:{message?.time.getMinutes()}</span>
+              </div>
             </li>
         ))}
-      </ul>
+      </CardContent>
 
-      <form className="flex items-center gap-2 p-4" onSubmit={(event) => {
-        event.stopPropagation();
-        event.preventDefault();
+      <CardFooter>
+        <form className="w-full flex items-center gap-2" onSubmit={(event) => {
+          event.stopPropagation();
+          event.preventDefault();
 
-        const data = new FormData(event.currentTarget);
+          const data = new FormData(event.currentTarget);
 
-        const message = data.get("message")?.toString().trim()
+          const message = data.get("message")?.toString().trim()
 
-        if (message && message.length > 0) sendMessage(authorId, message)
+          if (message && message.length > 0) sendMessage(authorId, message)
 
-        event.currentTarget.message.value = "";
-      }}>
-        <Input placeholder="Escreva sua mensagem..." className="rounded-full h-10" name="message" />
-        <Button className="bg-cyan-800 rounded-full p-2" type="submit">
-          <ChevronRight color="#FFF" />
-        </Button>
-      </form>
-    </main>
+          event.currentTarget.message.value = "";
+        }}>
+          <Input placeholder="Escreva sua mensagem..." name="message" />
+          <Button type="submit">
+            <ChevronRight color="#FFF" />
+          </Button>
+        </form>
+      </CardFooter>
+    </Card>
   );
 }

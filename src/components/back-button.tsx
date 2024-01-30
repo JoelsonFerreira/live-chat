@@ -10,7 +10,7 @@ export function BackButton() {
   const { back } = useRouter()
 
   return (
-    <Button onClick={back}>
+    <Button onClick={back} size={"icon"} variant={"secondary"}>
       <ChevronLeft />
     </Button>
   )

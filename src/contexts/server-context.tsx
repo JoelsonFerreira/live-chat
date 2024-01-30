@@ -2,9 +2,11 @@
 
 import { type ReactNode, createContext, useContext, useState, use } from "react";
 
+type Message = { user: string, messages: { text: string, sended: boolean, time: Date }[] }
+
 type TServerContext = {
   sendMessage: (to: string, message: string) => void
-  messages: { user: string, messages: { text: string, sended: boolean }[] }[]
+  messages: Message[]
   user?: string
   login: (user: string) => void
   onlineUsers: string[]
@@ -13,7 +15,7 @@ type TServerContext = {
 const ServerContext = createContext<TServerContext | null>(null)
 
 export function ServerProvider({ children }: { children?: ReactNode }) {
-  const [messages, setMessages] = useState<{ user: string, message: string, sended: boolean }[]>([])
+  const [messages, setMessages] = useState<{ user: string, message: string, sended: boolean, time: Date }[]>([])
   const [user, setUser] = useState<string>()
   const [onlineUsers, setOnlineUsers] = useState<string[]>([])
 
@@ -29,7 +31,7 @@ export function ServerProvider({ children }: { children?: ReactNode }) {
     } else {
       const { to, from, message } = messageData
 
-      if (from && message) setMessages(prevMessages => [...prevMessages, { user: from === user ? to : from, message: message, sended: from === user }])
+      if (from && message) setMessages(prevMessages => [...prevMessages, { user: from === user ? to : from, message: message, sended: from === user, time: new Date() }])
     }
   };
 
@@ -58,13 +60,13 @@ export function ServerProvider({ children }: { children?: ReactNode }) {
       if (userMessagesIndex !== -1) {
         const copy = [...result]
 
-        copy[userMessagesIndex].messages = [...copy[userMessagesIndex].messages, { text: message.message, sended: message.sended }]
+        copy[userMessagesIndex].messages = [...copy[userMessagesIndex].messages, { text: message.message, sended: message.sended, time: message.time }]
 
         return copy
       }
 
-      return [...result, { user: message.user, messages: [{ text: message.message, sended: message.sended }] }]
-    }, [] as { user: string, messages: { text: string, sended: boolean }[] }[])
+      return [...result, { user: message.user, messages: [{ text: message.message, sended: message.sended, time: message.time }] }]
+    }, [] as Message[])
 
   const blankMessages = onlineUsers
     .filter(user => !currentMessages.some(message => message.user === user))
