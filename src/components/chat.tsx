@@ -15,7 +15,7 @@ export function Chat({ authorId, showBackButton, className }: { authorId: string
   const userMessages = messages.find(message => message.user === authorId)
 
   return (
-    <Card className={className}>
+    <div className={className}>
       <CardHeader className="flex flex-row gap-2 items-center justify-start space-y-0">
         {showBackButton && <BackButton />}
         <CardTitle>{authorId}</CardTitle>
@@ -64,6 +64,6 @@ export function Chat({ authorId, showBackButton, className }: { authorId: string
           </Button>
         </form>
       </CardFooter>
-    </Card>
+    </div>
   );
 }
